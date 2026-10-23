@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panitia ANTASENA — Pondok Pesantren Nurul Qodiri</title>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="islamic-bg">
+  <div id="loading">
+    <div class="loading-logo">✦ ANTASENA ✦</div>
+    <div class="loading-bar"><div class="loading-progress"></div></div>
+  </div>
+
+  <canvas id="particles-canvas"></canvas>
+  <div class="stars-layer" id="starsLayer"></div>
+  <div class="cursor-glow" id="cursorGlow"></div>
+  <div class="toast" id="toast"></div>
+  <div class="save-indicator" id="saveIndicator"><i class="fas fa-check-circle"></i> Tersimpan Otomatis</div>
+  <div class="admin-badge" id="adminBadge"><i class="fas fa-shield-alt"></i> MODE ADMIN</div>
+
+  <nav id="navbar">
+    <a href="#hero" class="nav-logo">
+      <div class="nav-logo-fallback">☽</div>
+      <span class="nav-brand">ANTASENA</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">Tentang</a></li>
+      <li><a href="#anggota">Anggota</a></li>
+      <li><a href="#sosmed">Sosial Media</a></li>
+      <li><a href="#dokumentasi">Dokumentasi</a></li>
+      <li><a href="#" onclick="openAdminLogin()" class="btn-admin-nav">Admin</a></li>
+    </ul>
+  </nav>
+
+  <div class="admin-overlay" id="adminLoginModal">
+    <div class="admin-modal">
+      <button class="modal-close" onclick="closeAdminLogin()">×</button>
+      <div style="text-align:center;margin-bottom:20px;"><span style="font-size:3rem;color:var(--gold);">🛡</span></div>
+      <h2>Panel Admin</h2>
+      <p>Masukkan kata sandi untuk mengakses mode admin</p>
+      <div class="form-group">
+        <label>Kata Sandi</label>
+        <input type="password" id="adminPassword" placeholder="••••••••">
+      </div>
+      <button class="btn-gold" style="width:100%;" onclick="loginAdmin()"><i class="fas fa-unlock"></i> Masuk Admin</button>
+    </div>
+  </div>
+
+  <div class="admin-edit-panel" id="adminPanel">
+    <div class="edit-panel-header">
+      <h3><i class="fas fa-cog"></i> Panel Admin</h3>
+      <button class="modal-close" onclick="toggleAdminPanel()">×</button>
+    </div>
+    <div class="edit-section">
+      <div class="edit-section-title"><i class="fas fa-home"></i> Hero Section</div>
+      <div class="edit-field"><label>Judul Utama</label><input type="text" id="edit-hero-title" onchange="saveEdit('hero-title', this.value)"></div>
+      <div class="edit-field"><label>Sub Judul</label><input type="text" id="edit-hero-subtitle" onchange="saveEdit('hero-subtitle', this.value)"></div>
+      <div class="edit-field"><label>Tagline</label><input type="text" id="edit-hero-tagline" onchange="saveEdit('hero-tagline', this.value)"></div>
+    </div>
+    <div class="edit-section">
+      <div class="edit-section-title"><i class="fas fa-info-circle"></i> Tentang Kami</div>
+      <div class="edit-field"><label>Paragraf 1</label><textarea id="edit-about-p1" onchange="saveEdit('about-p1', this.value)"></textarea></div>
+      <div class="edit-field"><label>Paragraf 2</label><textarea id="edit-about-p2" onchange="saveEdit('about-p2', this.value)"></textarea></div>
+    </div>
+    <div class="edit-section">
+      <div class="edit-section-title"><i class="fab fa-instagram"></i> Sosial Media</div>
+      <div class="edit-field"><label>Link Instagram</label><input type="text" id="edit-ig-link" onchange="saveEdit('ig-link', this.value)"></div>
+      <div class="edit-field"><label>Handle Instagram</label><input type="text" id="edit-ig-handle" onchange="saveEdit('ig-handle', this.value)"></div>
+      <div class="edit-field"><label>Link TikTok</label><input type="text" id="edit-tt-link" onchange="saveEdit('tt-link', this.value)"></div>
+      <div class="edit-field"><label>Handle TikTok</label><input type="text" id="edit-tt-handle" onchange="saveEdit('tt-handle', this.value)"></div>
+    </div>
+    <div class="edit-section">
+      <div class="edit-section-title"><i class="fas fa-users"></i> Anggota</div>
+      <button class="btn-gold" style="width:100%;font-size:0.75rem;padding:10px;" onclick="addNewMember()"><i class="fas fa-plus"></i> Tambah Anggota Baru</button>
+    </div>
+  </div>
+
+  <div class="member-edit-modal" id="memberEditModal">
+    <div class="member-edit-content">
+      <button class="modal-close" onclick="closeMemberEdit()">×</button>
+      <h3><i class="fas fa-user-edit"></i> Edit Anggota</h3>
+      <input type="hidden" id="edit-member-index">
+      <div class="form-group"><label>Nama</label><input type="text" id="edit-m-name"></div>
+      <div class="form-group"><label>Jabatan</label><input type="text" id="edit-m-jabatan"></div>
+      <div class="form-group"><label>Badge</label><input type="text" id="edit-m-badge"></div>
+      <div class="form-group"><label>WhatsApp</label><input type="text" id="edit-m-wa"></div>
+      <div class="form-group"><label>Instagram</label><input type="text" id="edit-m-ig"></div>
+      <button class="btn-save" onclick="saveMemberEdit()"><i class="fas fa-save"></i> Simpan</button>
+    </div>
+  </div>
+
+  <div class="admin-toolbar" id="adminToolbar">
+    <span class="toolbar-label">⚙ ADMIN</span>
+    <button class="toolbar-btn primary" onclick="toggleAdminPanel()"><i class="fas fa-edit"></i> Edit Konten</button>
+    <button class="toolbar-btn danger" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+  </div>
+
+  <section id="hero" class="islamic-bg">
+    <div class="hero-bg-overlay"></div>
+    <div class="hero-content">
+      <span class="bismillah-text">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</span>
+      <div class="hero-logo-container">
+        <div class="hero-logo-ring"></div>
+        <div class="hero-logo-ring2"></div>
+        <div class="hero-logo-fallback">☽</div>
+      </div>
+      <div class="hero-divider"></div>
+      <h1 class="hero-title" id="hero-title">ANTASENA</h1>
+      <p class="hero-subtitle" id="hero-subtitle">Pondok Pesantren Nurul Qodiri</p>
+      <p class="hero-tagline" id="hero-tagline">Panitia Penyelenggara • 2026</p>
+      <div class="hero-divider"></div>
+      <p class="hero-arabic-quote">طَلَبُ الْعِلْمِ فَرِيضَةٌ عَلَى كُلِّ مُسْلِمٍ</p>
+      <p class="hero-quote-trans">"Menuntut ilmu adalah kewajiban bagi setiap Muslim" — HR. Ibnu Majah</p>
+      <div class="hero-cta">
+        <a href="#anggota" class="btn-gold"><i class="fas fa-users"></i> Lihat Anggota</a>
+        <a href="#dokumentasi" class="btn-outline-gold"><i class="fas fa-images"></i> Dokumentasi</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="islamic-bg">
+    <div class="section-header reveal">
+      <span class="section-label">✦ Tentang Kami ✦</span>
+      <h2 class="section-title">Panitia ANTASENA</h2>
+      <div class="section-divider"></div>
+      <p class="section-desc">Mengemban amanah dengan penuh dedikasi dan keikhlasan</p>
+    </div>
+    <div class="about-grid">
+      <div class="about-image-wrapper reveal">
+        <div class="about-logo-display">
+          <div class="about-logo-inner"><span style="font-size:3rem;color:var(--gold);">☽</span></div>
+        </div>
+      </div>
+      <div class="about-text reveal">
+        <h3>بِسْمِ اللَّهِ</h3>
+        <p id="about-p1"></p>
+        <p id="about-p2"></p>
+        <div class="about-stats">
+          <div class="stat-card reveal"><span class="stat-number" id="stat-anggota">20+</span><span class="stat-label">Anggota</span></div>
+          <div class="stat-card reveal"><span class="stat-number" id="stat-kegiatan">15+</span><span class="stat-label">Kegiatan</span></div>
+          <div class="stat-card reveal"><span class="stat-number" id="stat-tahun">2026</span><span class="stat-label">Tahun</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="anggota" class="islamic-bg">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="section-header reveal">
+        <span class="section-label">✦ Anggota Panitia ✦</span>
+        <h2 class="section-title">Para Pengurus</h2>
+        <div class="section-divider"></div>
+        <p class="section-desc">Mereka yang berjuang bersama dengan penuh amanah dan keikhlasan</p>
+      </div>
+      <div class="anggota-grid" id="anggotaGrid"></div>
+    </div>
+  </section>
+
+  <section id="sosmed" class="islamic-bg">
+    <div class="section-header reveal">
+      <span class="section-label">✦ Ikuti Kami ✦</span>
+      <h2 class="section-title">Media Sosial</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="sosmed-cards">
+      <a href="#" id="ig-card" class="sosmed-card reveal" style="--color:#e4405f;" target="_blank"><i class="fab fa-instagram sosmed-icon"></i><div class="sosmed-name">Instagram</div><div class="sosmed-handle" id="ig-handle"></div></a>
+      <a href="#" id="tt-card" class="sosmed-card reveal" style="--color:#ffffff;" target="_blank"><i class="fab fa-tiktok sosmed-icon"></i><div class="sosmed-name">TikTok</div><div class="sosmed-handle" id="tt-handle"></div></a>
+      <a href="#" id="wa-card" class="sosmed-card reveal" style="--color:#25d366;" target="_blank"><i class="fab fa-whatsapp sosmed-icon"></i><div class="sosmed-name">WhatsApp</div><div class="sosmed-handle" id="wa-handle"></div></a>
+    </div>
+  </section>
+
+  <section id="dokumentasi" class="islamic-bg">
+    <div class="section-header reveal">
+      <span class="section-label">✦ Galeri & Dokumentasi ✦</span>
+      <h2 class="section-title">Momen Berharga</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="doc-quote-section reveal" style="max-width:800px;margin:0 auto 60px;">
+      <div class="quote-arabic" id="quote-arabic"></div>
+      <div class="quote-latin" id="quote-latin"></div>
+      <div class="quote-trans" id="quote-trans"></div>
+      <div class="quote-nav" id="quoteNav"></div>
+    </div>
+    <div class="doc-gallery" id="docGallery" style="max-width:1200px;margin:0 auto;"></div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">ANTASENA</div>
+    <div class="footer-tagline">Ma'had Islami Salafi Nur Al-Qadiri • بِسْمِ اللَّهِ</div>
+    <div class="footer-copy">&copy; 2026 Panitia ANTASENA. Dibuat dengan ❤ dan keikhlasan.</div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="particles.js"></script>
+  <script src="effects.js"></script>
+  <script src="admin.js"></script>
+  <script src="render.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
